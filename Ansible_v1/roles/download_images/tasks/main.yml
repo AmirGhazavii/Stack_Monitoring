@@ -1,0 +1,5 @@
+- name: Pull images from registry with full path and tag
+  # This command pulls each monitoring image from the custom registry (e.g., focker.ir)
+  # Example: docker pull focker.ir/grafana/grafana:latest
+  command: docker pull {{ docker_registry }}/{{ item.image_path }}:{{ item.tag }}
+  loop: "{{ monitoring_images }}"

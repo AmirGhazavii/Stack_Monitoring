@@ -1,0 +1,9 @@
+---
+- name: SetDns - Download Images - change Tag - Deploy 
+  hosts: monitoring_stack
+  become: true
+  roles:
+    - set_dns
+    - download_images
+    - change_tag
+    - deploy 

@@ -1,0 +1,119 @@
+---
+- name: Create base directory
+  file:
+    path: "{{ stack_monitoring_path }}"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: "0755"
+
+# -------- Alertmanager --------
+- name: Create alertmanager directories
+  file:
+    path: "{{ stack_monitoring_path }}/alertmanager/{{ item }}"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ alertmanager.dirs }}"
+
+- name: Copy alertmanager files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ alertmanager.files }}"
+
+# -------- Docker Compose --------
+- name: Create docker-compose directories
+  file:
+    path: "{{ stack_monitoring_path }}/docker-compose/{{ item }}"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ docker_compose.dirs }}"
+
+- name: Copy docker-compose files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ docker_compose.files }}"
+
+# -------- Prometheus --------
+- name: Create prometheus rules directory
+  file:
+    path: "{{ stack_monitoring_path }}/docker-compose/prometheus/rules"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+
+- name: Copy prometheus config files
+  copy:
+    src: "configs/prometheus/{{ item }}"
+    dest: "{{ stack_monitoring_path }}/docker-compose/prometheus/{{ item }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ prometheus_files }}"
+
+- name: Copy prometheus rules files
+  copy:
+    src: "configs/prometheus/rules/{{ item }}"
+    dest: "{{ stack_monitoring_path }}/docker-compose/prometheus/rules/{{ item }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ prometheus_rules }}"
+
+# -------- Grafana --------
+- name: Create grafana directories
+  file:
+    path: "{{ stack_monitoring_path }}/grafana/{{ item }}"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ grafana_dirs }}"
+
+- name: Copy grafana dashboard files
+  copy:
+    src: "configs/grafana/dashboards/{{ item }}"
+    dest: "{{ stack_monitoring_path }}/grafana/dashboards/{{ item }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ grafana_dashboards }}"
+
+- name: Copy grafana provisioning files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ grafana_provisioning_files }}"
+
+# -------- Loki --------
+- name: Create loki directory
+  file:
+    path: "{{ stack_monitoring_path }}/loki"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+
+- name: Copy loki config files
+  copy:
+    src: "configs/loki/{{ item }}"
+    dest: "{{ stack_monitoring_path }}/loki/{{ item }}"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  loop: "{{ loki_files }}"
+
+# -------- Run Docker Compose --------
+- name: Run docker-compose up -d
+  shell: docker-compose up -d
+  args:
+    chdir: "{{ stack_monitoring_path }}/docker-compose"
+  register: compose_up_result
+  changed_when: "'Creating' in compose_up_result.stdout or 'Starting' in compose_up_result.stdout"
+
+- name: Show docker-compose output
+  debug:
+    var: compose_up_result.stdout_lines
