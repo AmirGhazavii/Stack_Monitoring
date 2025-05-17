@@ -1,2 +1,32 @@
-# Stack_Monitoring
-Full Stack Monitoring with Grafana and Prometheus — updated daily! This is the first version of the project, and I’m continuously working on it and adding new features. For your convenience, the entire stack is automated and deployable using Ansible — just run it and you’re good to go.
+# Monitor Stack with Grafana and Prometheus
+
+---
+
+
+
+This is a full monitoring stack built with Grafana and Prometheus.  
+- This is the first version of the project and is actively updated every day.  
+- The entire stack is automated using Ansible, so you just need to run the playbook to deploy everything easily.  
+- Configuration files are organized separately for easier customization and management.  
+- The goal is to keep improving and adding new features to make this one of the most complete monitoring stacks available.  
+
+Feel free to open issues or suggest new features!
+
+---
+
+
+
+این یک استک کامل مانیتورینگ با Grafana و Prometheus است.  
+- این نسخه اول پروژه است و به صورت روزانه در حال به‌روزرسانی می‌باشد.  
+- کل استک با استفاده از Ansible اتوماتیک شده است و فقط کافی است playbook را اجرا کنید تا به راحتی همه چیز نصب شود.  
+- فایل‌های تنظیمات به صورت جداگانه قرار داده شده‌اند تا مدیریت و شخصی‌سازی آسان‌تر باشد.  
+- هدف، بهبود مستمر و افزودن ویژگی‌های جدید است تا یکی از کامل‌ترین استک‌های مانیتورینگ باشد.  
+
+اگر نظری یا پیشنهاد فیچر داشتید، حتماً مطرح کنید!
+
+---
+
+## How to Run
+
+```bash
+ansible-playbook -i inventory/hosts.yml playbook/Install_Monitoring_Stack.yml
