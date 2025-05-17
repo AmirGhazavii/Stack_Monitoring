@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  alertmanager:
+    image: alertmanager:v1
+    ports:
+      - '9093:9093'
+    restart: unless-stopped
+    volumes:
+      - ../alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks:
+      - monitoring
+
+  blackbox-exporter:
+    image: blackbox:v1
+    ports:
+      - '9115:9115'
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/blackbox.yml:/etc/blackbox_exporter/config.yml
+    command:
+      - "--config.file=/etc/blackbox_exporter/config.yml"
+    cap_add:
+      - NET_RAW
+    networks:
+      - monitoring
+
+  cadvisor:
+    image: cadvisor:v1
+    ports:
+      - '8080:8080'
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitoring
+
+  grafana:
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=yourpassword
+    image: grafana:v1
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ../grafana/grafana_data:/var/lib/grafana
+      - ../grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ../grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ../grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - monitoring
+
+  node-exporter:
+    command: >
+      --path.procfs=/host/proc --path.sysfs=/host/sys
+      --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)
+    image: node-exporter:v1
+    ports:
+      - '9100:9100'
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - monitoring
+
+  prometheus:
+    image: promethus:v1
+    ports:
+      - '9090:9090'
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring
+
+  loki:
+    command: '-config.file=/etc/loki/local-config.yaml'
+    image: loki:v1
+    ports:
+      - '3100:3100'
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ../loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - ../loki/index:/loki/index
+      - ../loki/cache:/loki/cache
+      - ../loki/chunks:/loki/chunks
+      - ../loki/wal:/loki/wal
+    networks:
+      - monitoring
+
+volumes:
+  alertmanager_data:
+  grafana_data:
+  prometheus_data:
+
+networks:
+  monitoring:
+    driver: bridge
+
