@@ -1,5 +1,0 @@
-- name: Retag images locally
-  # This task retags pulled images from focker.ir to simple local names like grafana:v1
-  # Example: docker tag focker.ir/grafana/grafana:latest grafana:v1
-  command: docker tag {{ docker_registry }}/{{ item.image_path }}:{{ item.tag }} {{ item.name }}:{{ local_tag }}
-  loop: "{{ monitoring_images }}"
