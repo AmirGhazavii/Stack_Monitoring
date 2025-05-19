@@ -1,0 +1,35 @@
+groups:
+  - name: prometheus.rules
+    rules:
+      - alert: PrometheusTargetMissing
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Target {{ $labels.job }} ({{ $labels.instance }}) is down"
+          description: |
+            Prometheus is unable to scrape {{ $labels.job }} at {{ $labels.instance }}.
+            Target has been down for more than 2 minutes.
+
+      - alert: PrometheusRuleEvaluationSlow
+        expr: rate(prometheus_rule_evaluation_duration_seconds_sum[1m]) / rate(prometheus_rule_evaluation_duration_seconds_count[1m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow rule evaluation in Prometheus"
+          description: |
+            Prometheus rule evaluation is taking more than 1 second on average.
+
+      - alert: PrometheusTooManyTSDBHeadSeries
+        expr: prometheus_tsdb_head_series > 1e6
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Too many series in Prometheus TSDB"
+          description: |
+            Prometheus is handling more than 1M active time series.
+            This can cause high memory usage and slow queries.
+
