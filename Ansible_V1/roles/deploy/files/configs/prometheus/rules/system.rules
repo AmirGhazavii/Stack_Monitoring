@@ -1,0 +1,25 @@
+groups:
+  - name: system.rules
+    rules:
+      - alert: HighLoadAverage
+        expr: node_load1 > count(count by (instance) (node_cpu_seconds_total)) * 1.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Load average too high on {{ $labels.instance }}"
+          description: |
+            1-minute load average is too high.
+            System might be overloaded or have blocked processes.
+
+      - alert: TimeDrift
+        expr: abs(node_timex_offset_seconds) > 0.05
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Time drift detected on {{ $labels.instance }}"
+          description: |
+            System clock on {{ $labels.instance }} is drifting too much ({{ $value }}s).
+            Might affect certificate validation or distributed systems.
+

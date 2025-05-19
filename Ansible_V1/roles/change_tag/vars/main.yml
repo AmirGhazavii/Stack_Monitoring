@@ -1,0 +1,29 @@
+---
+docker_registry: "focker.ir"
+local_tag: "v1"
+
+monitoring_images:
+  - name: grafana
+    image_path: "grafana/grafana"
+    tag: "latest"
+  - name: prometheus
+    image_path: "prom/prometheus"
+    tag: "latest"
+  - name: cadvisor
+    image_path: "google/cadvisor"
+    tag: "latest"
+  - name: blackbox
+    image_path: "prom/blackbox-exporter"
+    tag: "latest"
+  - name: alertmanager
+    image_path: "prom/alertmanager"
+    tag: "latest"
+  - name: loki
+    image_path: "grafana/loki"
+    tag: "latest"
+  - name: node-exporter
+    image_path: "prom/node-exporter"
+    tag: "latest"
+  - name: promtail
+    image_path: "grafana/promtail"
+    tag: "latest"

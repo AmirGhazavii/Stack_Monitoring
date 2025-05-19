@@ -1,0 +1,53 @@
+---
+stack_monitoring_path: /opt/Stack_Monitoring
+owner: "{{ ansible_user }}"
+group: "{{ ansible_user }}"
+
+alertmanager:
+  dirs:
+    - alertmanager_data
+  files:
+    - src: configs/alertmanager/alertmanager.yml
+      dest: "{{ stack_monitoring_path }}/alertmanager/alertmanager.yml"
+
+docker_compose:
+  dirs:
+    - ""
+    - prometheus
+    - prometheus/prometheus_data
+    - prometheus/rules
+  files:
+    - src: configs/docker-compose/docker-compose.yml
+      dest: "{{ stack_monitoring_path }}/docker-compose/docker-compose.yml"
+
+prometheus_files:
+  - blackbox.yml
+  - prometheus.yml
+
+prometheus_rules:
+  - blackbox.rules
+  - docker.rules
+  - node.rules
+  - prometheus.rules
+  - system.rules
+
+grafana_dirs:
+  - dashboards
+  - provisioning/dashboards
+  - provisioning/datasource
+
+grafana_dashboards:
+  - BlackboxPingTest.json
+  - DockerContainerMonitor.json
+  - GrafanaMetrics.json
+  - NodeExporterFull.json
+
+grafana_provisioning_files:
+  - src: configs/grafana/provisioning/dashboards/dashboards.yml
+    dest: "{{ stack_monitoring_path }}/grafana/provisioning/dashboards/dashboards.yml"
+  - src: configs/grafana/provisioning/datasources/datasource.yml
+    dest: "{{ stack_monitoring_path }}/grafana/provisioning/datasources/datasource.yml"
+
+loki_files:
+  - loki-config.yaml
+  - promtail-config.yaml

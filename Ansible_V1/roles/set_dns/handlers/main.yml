@@ -1,0 +1,15 @@
+---
+- name: restart networking
+  become: yes
+  block:
+    - name: Restart networking service on Debian/Ubuntu
+      service:
+        name: networking
+        state: restarted
+      when: ansible_distribution in ['Debian', 'Ubuntu']
+
+    - name: Restart NetworkManager on RHEL/CentOS/Fedora
+      service:
+        name: NetworkManager
+        state: restarted
+      when: ansible_distribution in ['RedHat', 'CentOS', 'Fedora']
