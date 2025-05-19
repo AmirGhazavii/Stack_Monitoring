@@ -1,9 +1,46 @@
 ---
-- name: SetDns - Download Images - change Tag - Deploy 
+# This is the beginning of the Ansible playbook file
+
+- name: SetDns - Download Images - change Tag - Deploy
+  # This is the name of the play. It's just a description to make it easier to identify in logs/output.
+
   hosts: monitoring_stack
+  # This play targets the host group named "monitoring_stack" defined in your inventory file.
+  # You typically use this to deploy on a remote server.
+
   become: true
+  # Enables privilege escalation (e.g., sudo), required for tasks that need root access.
+
   roles:
     - set_dns
+    # Role to configure DNS settings on the target machine.
+    
     - download_images
+    # Role to download Docker/container images needed for deployment.
+
     - change_tag
-    - deploy 
+    # Role to update image tags (for example, switching from 'latest' to a specific version).
+
+    - deploy
+    # Final deployment step (could include starting containers, applying configs, etc.).
+
+
+# # local tasks
+# - name: Run local tasks 
+#   # A second play (commented out for now), intended to run locally on the same machine where the playbook is executed.
+
+#   hosts: localhost
+#   # This targets the local machine instead of a remote server.
+
+#   connection: local
+#   # Tells Ansible to use a local connection (no SSH), useful for executing tasks on the control node.
+
+#   gather_facts: false
+#   # Disables fact gathering for faster execution, since local facts are often unnecessary for simple tasks.
+
+#   roles:
+#     - set_dns
+#     - download_images
+#     - change_tag
+#     - deploy
+#     # Re-using the same roles locally (optional). You can modify this to include only roles relevant to local actions.
